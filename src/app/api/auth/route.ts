@@ -1,63 +1,59 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
+import { handleSignUp, handleSignIn, handleGetSession, handleSignOut } from '@/lib/auth-lib';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-function getSupabase() {
-  return createClient(supabaseUrl, supabaseAnonKey, {
-    auth: { persistSession: false },
-  });
-}
+const SESSION_COOKIE = 'session_token';
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { action } = body;
-    const supabase = getSupabase();
 
-    // Session check
-    if (action === 'session') {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return NextResponse.json({ user: null });
-      return NextResponse.json({
-        user: { id: user.id, email: user.email, createdAt: user.created_at },
-      });
-    }
-
-    // Sign out
-    if (action === 'signout') {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      return NextResponse.json({ success: true });
-    }
-
-    const { email, password } = body;
-
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
-    }
+    const cookieStore = await cookies();
 
     if (action === 'signup') {
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) throw error;
-      return NextResponse.json({
-        success: true,
-        user: data.user ? { id: data.user.id, email: data.user.email, createdAt: data.user.created_at } : null,
+      const { email, password } = body;
+      if (!email || !password) {
+        return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
+      }
+      const { user, token } = handleSignUp(email, password);
+      cookieStore.set(SESSION_COOKIE, token, {
+        httpOnly: true, secure: true, sameSite: 'lax',
+        path: '/', maxAge: 60 * 60 * 24 * 7,
       });
+      return NextResponse.json({ success: true, user });
     }
 
     if (action === 'signin') {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      return NextResponse.json({
-        success: true,
-        user: data.user ? { id: data.user.id, email: data.user.email, createdAt: data.user.created_at } : null,
+      const { email, password } = body;
+      if (!email || !password) {
+        return NextResponse.json({ error: 'Email and password required' }, { status: 400 });
+      }
+      const { user, token } = handleSignIn(email, password);
+      cookieStore.set(SESSION_COOKIE, token, {
+        httpOnly: true, secure: true, sameSite: 'lax',
+        path: '/', maxAge: 60 * 60 * 24 * 7,
       });
+      return NextResponse.json({ success: true, user });
+    }
+
+    if (action === 'session') {
+      const token = cookieStore.get(SESSION_COOKIE)?.value;
+      if (!token) return NextResponse.json({ user: null });
+      const session = handleGetSession(token);
+      if (!session) return NextResponse.json({ user: null });
+      return NextResponse.json(session);
+    }
+
+    if (action === 'signout') {
+      const token = cookieStore.get(SESSION_COOKIE)?.value;
+      if (token) handleSignOut(token);
+      cookieStore.delete(SESSION_COOKIE);
+      return NextResponse.json({ success: true });
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Authentication failed' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Authentication failed' }, { status: 400 });
   }
 }
