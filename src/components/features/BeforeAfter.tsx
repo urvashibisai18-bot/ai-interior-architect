@@ -9,19 +9,19 @@ const U = 'https://images.unsplash.com/photo-';
 const transformations = [
   {
     title: 'Living Room',
-    before: `${U}1555041467-a600c8d0e220?w=1000&h=600&fit=crop`,
+    before: `${U}1600210492486-724fe5c67fb0?w=1000&h=600&fit=crop`,
     after: `${U}1600607687939-ce8a6c25118c?w=1000&h=600&fit=crop`,
     description: 'From a normal living space to a bespoke AI-designed luxury lounge with gold accents',
   },
   {
     title: 'Bedroom',
     before: `${U}1522771739844-6a9f6d5f14af?w=1000&h=600&fit=crop`,
-    after: `${U}1505693416388-f3c6f5a5e9b8?w=1000&h=600&fit=crop`,
+    after: `${U}1505693416388-ac5ce068fe85?w=1000&h=600&fit=crop`,
     description: 'A standard bedroom transformed into a premium sanctuary with smart ambient lighting',
   },
   {
     title: 'Office',
-    before: `${U}1595514535413-5cbce93d7ef2?w=1000&h=600&fit=crop`,
+    before: `${U}1720247520862-7e4b14176fa8?w=1000&h=600&fit=crop`,
     after: `${U}1497366216548-37526070297c?w=1000&h=600&fit=crop`,
     description: 'Everyday workspace redesigned as a sophisticated executive suite with AI-optimized layout',
   },

@@ -12,11 +12,11 @@ import type { RoomType, StyleType, LightingType } from '@/types';
 const U = 'https://images.unsplash.com/photo-';
 
 const roomTypes: { value: RoomType; label: string; image: string }[] = [
-  { value: 'bedroom', label: 'Bedroom', image: `${U}1616594037284-b1b7e4e3b9c0?w=600&h=400&fit=crop` },
+  { value: 'bedroom', label: 'Bedroom', image: `${U}1760072513367-55182245e76c?w=600&h=400&fit=crop` },
   { value: 'living-room', label: 'Living Room', image: `${U}1586023492125-27b2c045efd7?w=600&h=400&fit=crop` },
-  { value: 'office', label: 'Office', image: `${U}1497366216548-37526070297c?w=600&h=400&fit=crop` },
-  { value: 'kitchen', label: 'Kitchen', image: `${U}1556909114-44d3be0e6e5e?w=600&h=400&fit=crop` },
-  { value: 'bathroom', label: 'Bathroom', image: `${U}1584622650111-3e3e3e3e3e3e?w=600&h=400&fit=crop` },
+  { value: 'office', label: 'Office', image: `${U}1631679706909-1844bbd07221?w=600&h=400&fit=crop` },
+  { value: 'kitchen', label: 'Kitchen', image: `${U}1705321963943-de94bb3f0dd3?w=600&h=400&fit=crop` },
+  { value: 'bathroom', label: 'Bathroom', image: `${U}1724582586529-62622e50c0b3?w=600&h=400&fit=crop` },
 ];
 
 const styles: { value: StyleType; label: string }[] = [
@@ -54,10 +54,10 @@ export default function AIDesigner() {
       const isBed = formData.roomType === 'bedroom';
       setSuggestions([
         { id: '1', type: 'flooring', name: 'Premium Marble Flooring', cost: Math.round(formData.budget * 0.18), image: `${U}1586023492125-27b2c045efd7?w=400&h=300&fit=crop`, description: 'Italian marble with gold veining — timeless elegance' },
-        { id: '2', type: 'lighting', name: 'Crystal Chandelier', cost: Math.round(formData.budget * 0.1), image: `${U}1513504637923-04bf7dad0e5a?w=400&h=300&fit=crop`, description: 'Hand-crafted crystal with gold finish — 60" diameter' },
-        { id: '3', type: 'furniture', name: isBed ? 'King Size Platform Bed' : 'Luxury Sectional Sofa', cost: Math.round(formData.budget * 0.35), image: isBed ? `${U}1505693416388-f3c6f5a5e9b8?w=400&h=300&fit=crop` : `${U}1555041467-a600c8d0e220?w=400&h=300&fit=crop`, description: isBed ? 'Premium upholstered headboard with gold legs' : 'Premium velvet upholstery with gold trim' },
-        { id: '4', type: 'decor', name: 'Gold Accent Wall Art', cost: Math.round(formData.budget * 0.07), image: `${U}1567098324869-f96d4ce5d7b0?w=400&h=300&fit=crop`, description: 'Abstract gold leaf canvas set — 3-piece collection' },
-        { id: '5', type: 'furniture', name: 'Designer Storage Unit', cost: Math.round(formData.budget * 0.15), image: `${U}1597008808545-1efadd7c2068?w=400&h=300&fit=crop`, description: 'Custom modular storage with integrated LED lighting' },
+        { id: '2', type: 'lighting', name: 'Crystal Chandelier', cost: Math.round(formData.budget * 0.1), image: `${U}1583847268964-b28dc8f51f92?w=400&h=300&fit=crop`, description: 'Hand-crafted crystal with gold finish — 60" diameter' },
+        { id: '3', type: 'furniture', name: isBed ? 'King Size Platform Bed' : 'Luxury Sectional Sofa', cost: Math.round(formData.budget * 0.35), image: isBed ? `${U}1505693416388-ac5ce068fe85?w=400&h=300&fit=crop` : `${U}1724775255163-b0f5f5241642?w=400&h=300&fit=crop`, description: isBed ? 'Premium upholstered headboard with gold legs' : 'Premium velvet upholstery with gold trim' },
+        { id: '4', type: 'decor', name: 'Gold Accent Wall Art', cost: Math.round(formData.budget * 0.07), image: `${U}1600210491892-03d54c0aaf87?w=400&h=300&fit=crop`, description: 'Abstract gold leaf canvas set — 3-piece collection' },
+        { id: '5', type: 'furniture', name: 'Designer Storage Unit', cost: Math.round(formData.budget * 0.15), image: `${U}1628744876497-eb30460be9f6?w=400&h=300&fit=crop`, description: 'Custom modular storage with integrated LED lighting' },
       ]);
       setTotalCost(Math.round(formData.budget * 0.85));
     } finally {

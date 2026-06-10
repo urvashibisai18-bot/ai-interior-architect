@@ -12,9 +12,9 @@ const styles: { id: StyleType; name: string; description: string; image: string 
   { id: 'minimalist', name: 'Minimalist', description: 'Less is more — simplicity at its finest', image: `${U}1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop` },
   { id: 'luxury', name: 'Luxury', description: 'Opulent materials, gold accents, grand spaces', image: `${U}1600585154340-be6161a56a0c?w=600&h=400&fit=crop` },
   { id: 'scandinavian', name: 'Scandinavian', description: 'Hygge-inspired, light woods, cozy textiles', image: `${U}1600210492486-724fe5c67fb0?w=600&h=400&fit=crop` },
-  { id: 'japanese', name: 'Japandi', description: 'Wabi-sabi meets Nordic — zen minimalism with natural warmth', image: `${U}1505693416388-f3c6f5a5e9b8?w=600&h=400&fit=crop` },
+  { id: 'japanese', name: 'Japandi', description: 'Wabi-sabi meets Nordic — zen minimalism with natural warmth', image: `${U}1505693416388-ac5ce068fe85?w=600&h=400&fit=crop` },
   { id: 'industrial', name: 'Industrial', description: 'Raw materials, exposed elements, urban edge', image: `${U}1497366216548-37526070297c?w=600&h=400&fit=crop` },
-  { id: 'futuristic', name: 'Futuristic', description: 'Bold geometry, neon accents, smart features', image: `${U}1558618666-9fa1e4e1478f?w=600&h=400&fit=crop` },
+  { id: 'futuristic', name: 'Futuristic', description: 'Bold geometry, neon accents, smart features', image: `${U}1638885930125-85350348d266?w=600&h=400&fit=crop` },
 ];
 
 export default function StyleGallery() {

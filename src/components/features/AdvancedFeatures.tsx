@@ -177,8 +177,8 @@ function VoiceDesigning() {
         const images: Record<string, string> = {
           modern: `${U}1600607687939-ce8a6c25118c?w=600&h=400&fit=crop`,
           luxury: `${U}1600585154340-be6161a56a0c?w=600&h=400&fit=crop`,
-          minimalist: `${U}1616486333462-e3e3e3e3e3e3?w=600&h=400&fit=crop`,
-          futuristic: `${U}1558618666-9fa1e4e1478f?w=600&h=400&fit=crop`,
+          minimalist: `${U}1583847268964-b28dc8f51f92?w=600&h=400&fit=crop`,
+          futuristic: `${U}1638885930125-85350348d266?w=600&h=400&fit=crop`,
           scandinavian: `${U}1600210492486-724fe5c67fb0?w=600&h=400&fit=crop`,
           industrial: `${U}1497366216548-37526070297c?w=600&h=400&fit=crop`,
         };
