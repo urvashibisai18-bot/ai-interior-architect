@@ -1,75 +1,63 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-let supabaseClient: ReturnType<typeof createClient> | null = null;
-
-function getClient() {
-  if (typeof window === 'undefined') return null;
-  if (!supabaseClient && supabaseUrl && supabaseAnonKey && supabaseUrl !== 'https://placeholder.supabase.co') {
-    supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: { persistSession: true, autoRefreshToken: true },
-    });
-  }
-  return supabaseClient;
-}
-
 export async function signUp(email: string, password: string) {
-  const supabase = getClient();
-  if (!supabase) throw new Error('Supabase not configured');
-  const { data, error } = await supabase.auth.signUp({ email, password });
-  if (error) throw error;
+  const res = await fetch('/api/auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, action: 'signup' }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Signup failed');
   return data;
 }
 
 export async function signIn(email: string, password: string) {
-  const supabase = getClient();
-  if (!supabase) throw new Error('Supabase not configured');
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error) throw error;
+  const res = await fetch('/api/auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, action: 'signin' }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Sign in failed');
   return data;
 }
 
 export async function signOut() {
-  const supabase = getClient();
-  if (!supabase) return;
-  const { error } = await supabase.auth.signOut();
-  if (error) throw error;
+  await fetch('/api/auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'signout' }),
+  });
 }
 
 export async function getSession() {
-  const supabase = getClient();
-  if (!supabase) return null;
-  const { data: { session } } = await supabase.auth.getSession();
-  return session;
+  const res = await fetch('/api/auth', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'session' }),
+  });
+  const data = await res.json();
+  return data.user || null;
 }
 
 export async function saveDesign(designData: Record<string, unknown>) {
-  const supabase = getClient();
-  if (!supabase) throw new Error('Supabase not configured');
-  const { data, error } = await supabase.from('designs').insert(designData as any).select();
-  if (error) throw error;
-  return data as Record<string, unknown>[] | null;
+  const res = await fetch('/api/user/designs', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(designData),
+  });
+  if (!res.ok) throw new Error('Failed to save design');
+  const data = await res.json();
+  return data.design;
 }
 
-export async function getUserDesigns(userId: string) {
-  const supabase = getClient();
-  if (!supabase) return [];
-  const { data, error } = await supabase
-    .from('designs')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return data;
+export async function getUserDesigns() {
+  const res = await fetch('/api/user/designs');
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.designs || [];
 }
 
 export async function deleteDesign(designId: string) {
-  const supabase = getClient();
-  if (!supabase) throw new Error('Supabase not configured');
-  const { error } = await supabase.from('designs').delete().eq('id', designId);
-  if (error) throw error;
+  await fetch(`/api/user/designs?id=${designId}`, { method: 'DELETE' });
 }
 
-export default getClient;
+export default getSession;
