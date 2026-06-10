@@ -1,8 +1,5 @@
 import { create } from 'zustand';
-import type {
-  DesignFormData, AIRecommendation, ChatMessage, Product,
-  RoomType, StyleType, LightingType, RoomDimensions, ColorPreferences, FurniturePreferences
-} from '@/types';
+import type { DesignFormData, AIRecommendation, ChatMessage, Product, RoomType, StyleType, LightingType, RoomDimensions, ColorPreferences, FurniturePreferences, User, SavedDesign } from '@/types';
 
 interface DesignState {
   // Form State
@@ -43,6 +40,14 @@ interface DesignState {
   // Active Section
   activeSection: string;
   setActiveSection: (section: string) => void;
+
+  // Auth
+  user: User | null;
+  setUser: (user: User | null) => void;
+  isAuthLoading: boolean;
+  setIsAuthLoading: (loading: boolean) => void;
+  savedDesigns: SavedDesign[];
+  setSavedDesigns: (designs: SavedDesign[]) => void;
 }
 
 const defaultFormData: DesignFormData = {
@@ -87,4 +92,12 @@ export const useDesignStore = create<DesignState>((set) => ({
 
   activeSection: 'hero',
   setActiveSection: (activeSection) => set({ activeSection }),
+
+  // Auth
+  user: null,
+  setUser: (user) => set({ user }),
+  isAuthLoading: true,
+  setIsAuthLoading: (isAuthLoading) => set({ isAuthLoading }),
+  savedDesigns: [],
+  setSavedDesigns: (savedDesigns) => set({ savedDesigns }),
 }));
