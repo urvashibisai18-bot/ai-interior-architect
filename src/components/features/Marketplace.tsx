@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useDesignStore } from '@/store/useDesignStore';
+import AnimatedBackground from '@/components/layout/AnimatedBackground';
 import { formatCurrency } from '@/lib/utils';
 import type { StyleType } from '@/types';
 
@@ -23,10 +24,10 @@ const allProducts = [
   { id: '12', name: 'Neon LED Sign', price: 4500, category: 'Decor', style: 'futuristic' as StyleType, color: '#FF6B6B', rating: 4.2, image: `${U}1558618666-9fa1e4e1478f?w=500&h=350&fit=crop` },
   { id: '13', name: 'Premium Sliding Wardrobe', price: 38000, category: 'Wardrobe', style: 'modern' as StyleType, color: '#2A2A2A', rating: 4.7, image: `${U}1597008808545-1efadd7c2068?w=500&h=350&fit=crop` },
   { id: '14', name: 'Classic Wooden Wardrobe', price: 32000, category: 'Wardrobe', style: 'luxury' as StyleType, color: '#5C4033', rating: 4.5, image: `${U}1505692952049-f3a0d8e7b96?w=500&h=350&fit=crop` },
-  { id: '15', name: 'Gold Trim Armchair', price: 28000, category: 'Chair', style: 'luxury' as StyleType, color: '#D4AF37', rating: 4.6, image: `${U}1567532895736-3e3e3e3e3e3e?w=500&h=350&fit=crop` },
+  { id: '15', name: 'Gold Trim Armchair', price: 28000, category: 'Chair', style: 'luxury' as StyleType, color: '#D4AF37', rating: 4.6, image: `${U}1586023492125-27b2c045efd7?w=500&h=350&fit=crop` },
   { id: '16', name: 'Ergonomic Office Chair', price: 15000, category: 'Chair', style: 'modern' as StyleType, color: '#1A1A1A', rating: 4.4, image: `${U}1592078615290-4f4b5c6c3ea8?w=500&h=350&fit=crop` },
-  { id: '17', name: 'Marble Coffee Table', price: 18000, category: 'Decor', style: 'luxury' as StyleType, color: '#F5F0EB', rating: 4.5, image: `${U}1533091105-3e3e3e3e3e3e?w=500&h=350&fit=crop` },
-  { id: '18', name: 'Gold Pendant Light', price: 9500, category: 'Lamp', style: 'luxury' as StyleType, color: '#D4AF37', rating: 4.8, image: `${U}1540932233-4e3e3e3e3e3e?w=500&h=350&fit=crop` },
+  { id: '17', name: 'Marble Coffee Table', price: 18000, category: 'Decor', style: 'luxury' as StyleType, color: '#F5F0EB', rating: 4.5, image: `${U}1600585154340-be6161a56a0c?w=500&h=350&fit=crop` },
+  { id: '18', name: 'Gold Pendant Light', price: 9500, category: 'Lamp', style: 'luxury' as StyleType, color: '#D4AF37', rating: 4.8, image: `${U}1600607687939-ce8a6c25118c?w=500&h=350&fit=crop` },
 ];
 
 const categories = ['All', 'Sofa', 'Bed', 'Desk', 'Lamp', 'Curtains', 'Decor', 'Wardrobe', 'Chair'];
@@ -45,6 +46,7 @@ export default function Marketplace() {
 
   return (
     <section id="marketplace" className="section-padding bg-black">
+      <AnimatedBackground>
       <div className="container-custom">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-16">
           <h2 className="font-heading text-4xl md:text-5xl text-light mb-4">
@@ -107,6 +109,7 @@ export default function Marketplace() {
           ))}
         </div>
       </div>
+      </AnimatedBackground>
     </section>
   );
 }
