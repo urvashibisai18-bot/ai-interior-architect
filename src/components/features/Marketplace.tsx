@@ -99,7 +99,8 @@ export default function Marketplace() {
                       className="text-xs border border-gold/30 text-gold px-2.5 py-1.5 rounded-lg hover:bg-gold/10 transition-all">
                       Add to Design
                     </button>
-                    <button className="text-xs bg-gold text-navy font-semibold px-2.5 py-1.5 rounded-lg hover:bg-gold-light transition-all">
+                    <button onClick={() => { addToDesign({ type: product.category.toLowerCase(), name: product.name, image: product.image }); alert(`Added ${product.name} to cart!`); }}
+                      className="text-xs bg-gold text-navy font-semibold px-2.5 py-1.5 rounded-lg hover:bg-gold-light transition-all">
                       Buy Now
                     </button>
                   </div>

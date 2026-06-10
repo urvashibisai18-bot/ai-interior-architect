@@ -301,10 +301,13 @@ export default function AIDesigner() {
                 </div>
 
                 <div className="flex gap-2 mt-3">
-                  <button className="flex-1 btn-gold text-xs py-2.5">Save Design</button>
-                  <button className="flex-1 btn-glass text-xs py-2.5">Share</button>
+                  <button onClick={() => { const d = { suggestions, totalCost, formData }; localStorage.setItem('savedDesign', JSON.stringify(d)); alert('Design saved!'); }}
+                    className="flex-1 btn-gold text-xs py-2.5">Save Design</button>
+                  <button onClick={() => { navigator.clipboard.writeText(window.location.href); alert('Link copied!'); }}
+                    className="flex-1 btn-glass text-xs py-2.5">Share</button>
                 </div>
-                <button className="w-full border border-gold/40 text-gold text-xs py-2.5 rounded-lg hover:bg-gold/10 transition-all mt-2">
+                <button onClick={() => { setSuggestions(suggestions.map((s) => ({ ...s, cost: Math.round(s.cost * (0.8 + Math.random() * 0.4)), name: s.name + ' (Alt)' }))); }}
+                  className="w-full border border-gold/40 text-gold text-xs py-2.5 rounded-lg hover:bg-gold/10 transition-all mt-2">
                   Compare Layouts
                 </button>
               </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedBackground from '@/components/layout/AnimatedBackground';
 
@@ -42,17 +42,12 @@ export default function BeforeAfter() {
     if (!autoPlay) return;
     const interval = setInterval(() => {
       setSliderPos((prev) => {
-        if (prev >= 100) return 0;
+        if (prev >= 100) { setActiveIndex((p) => (p + 1) % transformations.length); return 0; }
         return prev + 1;
       });
     }, 40);
     return () => clearInterval(interval);
   }, [autoPlay]);
-
-  const cycleRoom = useCallback(() => {
-    setActiveIndex((prev) => (prev + 1) % transformations.length);
-    setSliderPos(50);
-  }, []);
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();

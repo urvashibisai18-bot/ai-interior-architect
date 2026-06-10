@@ -105,10 +105,22 @@ export default function RoomScene() {
     if (furniture.curtains) items.push({ type: 'curtains', position: [0, 0, -l/2 + 0.05], props: { width: w } });
     if (furniture.shelving) items.push({ type: 'shelving', position: [-w/2 + 0.7, 0, l/5], props: {} });
 
-    // Add pending additions from marketplace/style gallery
+    // Add pending additions from recommendations/marketplace
     pendingAdditions.forEach((item, idx) => {
       const offset = idx * 0.8;
-      items.push({ type: item.type, position: [w/4 + offset, 0, l/4 + 0.5], props: {} });
+      const t = item.type?.toLowerCase() || '';
+      let mappedType = t;
+      if (t === 'flooring') return;
+      if (t === 'lighting') mappedType = 'lamp';
+      else if (t === 'furniture' || t === 'decor') {
+        if (item.name?.toLowerCase().includes('bed')) mappedType = 'bed';
+        else if (item.name?.toLowerCase().includes('sofa') || item.name?.toLowerCase().includes('seating')) mappedType = 'sofa';
+        else if (item.name?.toLowerCase().includes('desk') || item.name?.toLowerCase().includes('table') || item.name?.toLowerCase().includes('storage') || item.name?.toLowerCase().includes('wardrobe')) mappedType = 'desk';
+        else if (item.name?.toLowerCase().includes('lamp') || item.name?.toLowerCase().includes('light')) mappedType = 'lamp';
+        else if (item.name?.toLowerCase().includes('chair')) mappedType = 'chair';
+        else mappedType = 'lamp';
+      }
+      items.push({ type: mappedType, position: [w/4 + offset, 0, l/4 + 0.5], props: {} });
     });
 
     return items;
