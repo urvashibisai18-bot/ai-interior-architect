@@ -2,9 +2,10 @@
 
 import { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows, Float } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import { useDesignStore } from '@/store/useDesignStore';
+import { KingBed, StudyDesk, LuxurySofa, FloorLamp, Wardrobe, TableLamp, Curtains, Rug, Bookshelf } from './FurnitureModels';
 
 function Room({ dimensions }: { dimensions: { width: number; length: number; height: number } }) {
   const { style, colors } = useDesignStore((s) => s.formData);
@@ -45,33 +46,6 @@ function Room({ dimensions }: { dimensions: { width: number; length: number; hei
         </mesh>
       ))}
     </group>
-  );
-}
-
-function Furniture({ type, position, color }: { type: string; position: [number, number, number]; color?: string }) {
-  const geo = useMemo(() => {
-    switch (type) {
-      case 'sofa':
-        return new THREE.BoxGeometry(2, 0.8, 1);
-      case 'bed':
-        return new THREE.BoxGeometry(1.8, 0.5, 2);
-      case 'desk':
-        return new THREE.BoxGeometry(1.2, 0.7, 0.6);
-      case 'lamp':
-        return new THREE.CylinderGeometry(0.1, 0.15, 0.6, 8);
-      case 'table':
-        return new THREE.BoxGeometry(1, 0.6, 0.8);
-      default:
-        return new THREE.BoxGeometry(0.8, 0.8, 0.8);
-    }
-  }, [type]);
-
-  return (
-    <Float speed={1} rotationIntensity={0.1} floatIntensity={0.05}>
-      <mesh position={position} geometry={geo} castShadow receiveShadow>
-        <meshStandardMaterial color={color || '#8B7355'} roughness={0.4} metalness={0.3} />
-      </mesh>
-    </Float>
   );
 }
 
@@ -127,31 +101,47 @@ function Particles({ count = 50 }) {
 }
 
 export default function RoomScene() {
-  const { formData, suggestions } = useDesignStore();
+  const { formData } = useDesignStore();
   const { dimensions, lighting, furniture, style } = formData;
 
   const furnitureItems = useMemo(() => {
-    const items: { type: string; position: [number, number, number]; color?: string }[] = [];
+    const items: { type: string; position: [number, number, number]; color?: string; props?: any }[] = [];
     const w = dimensions.width;
     const l = dimensions.length;
 
-    if (furniture.sofa) items.push({ type: 'sofa', position: [0, 0.4, -l / 4], color: style === 'luxury' ? '#D4AF37' : '#8B7355' });
-    if (furniture.bed) items.push({ type: 'bed', position: [w / 4, 0.25, -l / 5] });
-    if (furniture.desk) items.push({ type: 'desk', position: [-w / 4, 0.35, l / 4] });
-    if (furniture.lamp) items.push({ type: 'lamp', position: [w / 3, 0.3, l / 4] });
-    if (furniture.studyTable) items.push({ type: 'table', position: [-w / 5, 0.3, -l / 5] });
+    if (furniture.sofa) items.push({ type: 'sofa', position: [0, 0, -l/4 + 0.5], props: { color: style === 'luxury' ? '#5C4033' : '#8B7355', fabricColor: style === 'luxury' ? '#D4AF37' : '#4A4A4A' } });
+    if (furniture.bed) items.push({ type: 'bed', position: [w/4, 0, -l/5], props: { color: '#5C4033', pillowColor: '#F5F0EB', blanketColor: style === 'luxury' ? '#D4AF37' : '#8B7355' } });
+    if (furniture.desk) items.push({ type: 'desk', position: [-w/4, 0, l/4], props: { color: '#8B7355', hasChair: true } });
+    if (furniture.lamp) items.push({ type: 'lamp', position: [w/3, 0, l/4], props: { color: '#D4AF37', isOn: true } });
+    if (furniture.studyTable) items.push({ type: 'table', position: [-w/5, 0, -l/5], props: { color: '#8B7355', hasChair: true } });
+    if (furniture.wardrobe) items.push({ type: 'wardrobe', position: [w/2 - 0.7, 0, -l/6], props: { color: '#5C4033' } });
+    if (furniture.curtains) items.push({ type: 'curtains', position: [0, 0, -l/2 + 0.05], props: { color: style === 'luxury' ? '#1A1A2E' : '#4A4A4A', width: w } });
+    if (furniture.shelving) items.push({ type: 'shelving', position: [-w/2 + 0.7, 0, l/5], props: { color: '#5C4033' } });
 
     return items;
   }, [furniture, dimensions, style]);
 
+  const renderFurniture = (item: { type: string; position: [number, number, number]; props?: any }, index: number) => {
+    const key = `${item.type}-${index}`;
+    switch (item.type) {
+      case 'sofa': return <LuxurySofa key={key} position={item.position} {...item.props} />;
+      case 'bed': return <KingBed key={key} position={item.position} {...item.props} />;
+      case 'desk': case 'table': return <StudyDesk key={key} position={item.position} {...item.props} />;
+      case 'lamp': return <FloorLamp key={key} position={item.position} {...item.props} />;
+      case 'wardrobe': return <Wardrobe key={key} position={item.position} {...item.props} />;
+      case 'curtains': return <Curtains key={key} position={item.position} {...item.props} />;
+      case 'shelving': return <Bookshelf key={key} position={item.position} {...item.props} />;
+      default: return null;
+    }
+  };
+
   return (
-    <Canvas shadows camera={{ position: [6, 4, 8], fov: 50 }}>
+    <Canvas shadows camera={{ position: [6, 4, 8], fov: 50 }} gl={{ antialias: true }}>
       <color attach="background" args={['#0A192F']} />
       <Lighting type={lighting} />
       <Room dimensions={dimensions} />
-      {furnitureItems.map((item, i) => (
-        <Furniture key={i} type={item.type} position={item.position} color={item.color} />
-      ))}
+      <Rug position={[0, 0, 0]} color={style === 'luxury' ? '#D4AF37' : style === 'modern' ? '#8B7355' : '#5C4033'} size={[Math.min(dimensions.width - 1, 4), Math.min(dimensions.length - 1, 3)]} />
+      {furnitureItems.map(renderFurniture)}
       <Particles />
       <ContactShadows position={[0, 0.01, 0]} opacity={0.4} scale={10} blur={2.5} />
       <Environment preset="studio" />
