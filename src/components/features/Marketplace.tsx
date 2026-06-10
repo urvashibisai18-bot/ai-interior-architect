@@ -99,7 +99,7 @@ export default function Marketplace() {
                       className="text-xs border border-gold/30 text-gold px-2.5 py-1.5 rounded-lg hover:bg-gold/10 transition-all">
                       Add to Design
                     </button>
-                    <button onClick={() => { addToDesign({ type: product.category.toLowerCase(), name: product.name, image: product.image }); alert(`Added ${product.name} to cart!`); }}
+                    <button onClick={() => { window.open(`https://www.google.com/search?tbm=shop&q=${encodeURIComponent(product.name + ' furniture')}`, '_blank', 'noopener,noreferrer'); }}
                       className="text-xs bg-gold text-navy font-semibold px-2.5 py-1.5 rounded-lg hover:bg-gold-light transition-all">
                       Buy Now
                     </button>

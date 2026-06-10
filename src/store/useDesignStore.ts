@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import type { DesignFormData, AIRecommendation, ChatMessage, Product, RoomType, StyleType, LightingType, RoomDimensions, ColorPreferences, FurniturePreferences, User, SavedDesign } from '@/types';
 
+interface DesignItem {
+  type: string;
+  name: string;
+  image: string;
+  addedAt: number;
+}
+
 interface DesignState {
   // Form State
   formData: DesignFormData;
@@ -48,11 +55,14 @@ interface DesignState {
   setIsAuthLoading: (loading: boolean) => void;
   savedDesigns: SavedDesign[];
   setSavedDesigns: (designs: SavedDesign[]) => void;
+  saveDesign: () => void;
+  loadSavedDesigns: () => void;
 
-  // Add to Design queue
-  pendingAdditions: { type: string; name: string; image: string }[];
+  // Design items added by user
+  pendingAdditions: DesignItem[];
   addToDesign: (item: { type: string; name: string; image: string }) => void;
   clearAdditions: () => void;
+  removeDesignItem: (index: number) => void;
 }
 
 const defaultFormData: DesignFormData = {
@@ -65,7 +75,20 @@ const defaultFormData: DesignFormData = {
   lighting: 'natural',
 };
 
-export const useDesignStore = create<DesignState>((set) => ({
+function loadDesigns(): SavedDesign[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem('savedDesigns');
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+function persistDesigns(designs: SavedDesign[]) {
+  if (typeof window === 'undefined') return;
+  try { localStorage.setItem('savedDesigns', JSON.stringify(designs)); } catch {}
+}
+
+export const useDesignStore = create<DesignState>((set, get) => ({
   formData: defaultFormData,
   setFormData: (data) => set((state) => ({ formData: { ...state.formData, ...data } })),
   resetForm: () => set({ formData: defaultFormData }),
@@ -98,7 +121,6 @@ export const useDesignStore = create<DesignState>((set) => ({
   activeSection: 'hero',
   setActiveSection: (activeSection) => set({ activeSection }),
 
-  // Auth
   user: null,
   setUser: (user) => set({ user }),
   isAuthLoading: true,
@@ -106,8 +128,37 @@ export const useDesignStore = create<DesignState>((set) => ({
   savedDesigns: [],
   setSavedDesigns: (savedDesigns) => set({ savedDesigns }),
 
-  // Add to Design
+  loadSavedDesigns: () => set({ savedDesigns: loadDesigns() }),
+
+  saveDesign: () => {
+    const state = get();
+    const newDesign: SavedDesign = {
+      id: Date.now().toString(36),
+      userId: state.user?.id || 'local',
+      roomType: state.formData.roomType,
+      dimensions: { ...state.formData.dimensions },
+      budget: state.formData.budget,
+      style: state.formData.style,
+      colors: { ...state.formData.colors },
+      furniture: { ...state.formData.furniture },
+      lighting: state.formData.lighting,
+      aiSuggestions: [...state.suggestions],
+      totalCost: state.totalCost,
+      createdAt: new Date().toISOString(),
+    };
+    const updated = [newDesign, ...loadDesigns()].slice(0, 20);
+    persistDesigns(updated);
+    set({ savedDesigns: updated });
+  },
+
   pendingAdditions: [],
-  addToDesign: (item) => set((state) => ({ pendingAdditions: [...state.pendingAdditions, item] })),
+  addToDesign: (item) => set((state) => ({
+    pendingAdditions: [...state.pendingAdditions, { ...item, addedAt: Date.now() }],
+    currentDesign: { items: [...state.pendingAdditions, { ...item, addedAt: Date.now() }], formData: state.formData },
+  })),
   clearAdditions: () => set({ pendingAdditions: [] }),
+  removeDesignItem: (index) => set((state) => {
+    const updated = state.pendingAdditions.filter((_, i) => i !== index);
+    return { pendingAdditions: updated, currentDesign: updated.length > 0 ? { items: updated, formData: state.formData } : null };
+  }),
 }));

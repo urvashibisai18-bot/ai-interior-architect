@@ -52,8 +52,9 @@ const colorThemes = [
 ];
 
 export default function AIDesigner() {
-  const { formData, setFormData, suggestions, setSuggestions, setTotalCost, totalCost, isGenerating, setIsGenerating, user, addToDesign, pendingAdditions } = useDesignStore();
+  const { formData, setFormData, suggestions, setSuggestions, setTotalCost, totalCost, isGenerating, setIsGenerating, user, addToDesign, pendingAdditions, saveDesign, removeDesignItem, savedDesigns } = useDesignStore();
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showAddedItems, setShowAddedItems] = useState(false);
 
   const handleGenerate = useCallback(async () => {
     setIsGenerating(true);
@@ -300,13 +301,42 @@ export default function AIDesigner() {
                   </p>
                 </div>
 
+                {pendingAdditions.length > 0 && (
+                  <div className="border-t border-gold/15 pt-2 mt-2">
+                    <button onClick={() => setShowAddedItems(!showAddedItems)}
+                      className="flex items-center justify-between w-full text-xs text-gold mb-1">
+                      <span>Added Items ({pendingAdditions.length})</span>
+                      <span>{showAddedItems ? '▲' : '▼'}</span>
+                    </button>
+                    {showAddedItems && pendingAdditions.map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between py-1 px-2 rounded bg-gold/5 mb-1">
+                        <span className="text-xs text-light truncate max-w-[120px]">{item.name}</span>
+                        <button onClick={() => removeDesignItem(idx)}
+                          className="text-xs text-red-400 hover:text-red-300 ml-1">✕</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 <div className="flex gap-2 mt-3">
-                  <button onClick={() => { const d = { suggestions, totalCost, formData }; localStorage.setItem('savedDesign', JSON.stringify(d)); alert('Design saved!'); }}
-                    className="flex-1 btn-gold text-xs py-2.5">Save Design</button>
-                  <button onClick={() => { navigator.clipboard.writeText(window.location.href); alert('Link copied!'); }}
+                  <button onClick={() => { saveDesign(); }}
+                    className="flex-1 btn-gold text-xs py-2.5">
+                    {savedDesigns.length > 0 ? `Save (${savedDesigns.length})` : 'Save Design'}
+                  </button>
+                  <button onClick={async () => {
+                    const text = `My AI Design: ${formData.roomType} in ${formData.style} style • ₹${totalCost.toLocaleString()} • ${pendingAdditions.length} items added`;
+                    if (navigator.share) { try { await navigator.share({ title: 'AI Interior Design', text }); } catch {} }
+                    else { await navigator.clipboard.writeText(text); }
+                  }}
                     className="flex-1 btn-glass text-xs py-2.5">Share</button>
                 </div>
-                <button onClick={() => { setSuggestions(suggestions.map((s) => ({ ...s, cost: Math.round(s.cost * (0.8 + Math.random() * 0.4)), name: s.name + ' (Alt)' }))); }}
+                <button onClick={() => {
+                  setSuggestions(suggestions.map((s) => ({
+                    ...s,
+                    cost: Math.round(s.cost * (0.8 + Math.random() * 0.4)),
+                    name: s.name.includes('(Alt)') ? s.name.replace(' (Alt)', '') + ' (Alt)' : s.name + ' (Alt)',
+                  })));
+                }}
                   className="w-full border border-gold/40 text-gold text-xs py-2.5 rounded-lg hover:bg-gold/10 transition-all mt-2">
                   Compare Layouts
                 </button>

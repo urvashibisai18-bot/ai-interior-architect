@@ -131,7 +131,7 @@ export default function RoomScene() {
     switch (item.type) {
       case 'sofa': return <PremiumSofa key={key} position={item.position} {...item.props} />;
       case 'bed': return <KingBed key={key} position={item.position} {...item.props} />;
-      case 'desk': case 'table': return <StudyDesk key={key} position={item.position} {...item.props} />;
+      case 'desk': case 'table': case 'wardrobe': return <StudyDesk key={key} position={item.position} {...item.props} />;
       case 'lamp': return <ArcLamp key={key} position={item.position} {...item.props} />;
       case 'chair': return <OfficeChair key={key} position={item.position} {...item.props} />;
       default: return null;
