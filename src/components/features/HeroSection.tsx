@@ -58,13 +58,17 @@ function HeroRoom() {
 
   return (
     <group ref={groupRef}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[10, 10]} />
-        <meshStandardMaterial color="#111111" roughness={0.9} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.01, 0]} receiveShadow>
+        <planeGeometry args={[12, 12]} />
+        <meshStandardMaterial color="#F0F0F0" roughness={0.3} metalness={0.1} />
       </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-        <planeGeometry args={[5, 5]} />
-        <meshStandardMaterial color="#D4AF37" transparent opacity={0.03} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <planeGeometry args={[4, 4]} />
+        <meshStandardMaterial color="#D4AF37" transparent opacity={0.04} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.005, 0]}>
+        <planeGeometry args={[3.5, 3.5]} />
+        <meshStandardMaterial color="#FFFFFF" transparent opacity={0.06} metalness={0.5} roughness={0.2} />
       </mesh>
       <FadeIn delay={0.3} duration={1.0}>
         <KingBed position={[-1.8, 0, 0.8]} color="#1A1A1A" pillowColor="#F5F0EB" blanketColor="#D4AF37" />
@@ -98,17 +102,20 @@ export default function HeroSection() {
   return (
     <section id="hero" ref={ref} className="relative min-h-screen flex items-center overflow-hidden bg-black">
       <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [5, 3.5, 7], fov: 45 }}>
-          <color attach="background" args={['#000000']} />
-          <ambientLight intensity={0.15} />
-          <directionalLight position={[4, 6, 4]} intensity={0.4} color="#D4AF37" />
-          <spotLight position={[-2, 5, 3]} intensity={0.2} color="#D4AF37" angle={0.3} penumbra={0.5} />
+        <Canvas camera={{ position: [4, 3, 6], fov: 42 }}>
+          <color attach="background" args={['#F8F8F8']} />
+          <ambientLight intensity={0.6} />
+          <directionalLight position={[5, 8, 5]} intensity={0.8} color="#FFF" />
+          <directionalLight position={[-3, 4, -2]} intensity={0.3} color="#D4AF37" />
+          <spotLight position={[0, 6, 2]} intensity={0.4} color="#FFF" angle={0.5} penumbra={0.4} />
           <HeroRoom />
           <GoldParticles />
-          <ContactShadows position={[0, 0, 0]} opacity={0.4} scale={10} blur={3} />
-          <Environment preset="night" />
+          <ContactShadows position={[0, 0, 0]} opacity={0.2} scale={12} blur={4} color="#888" />
+          <Environment preset="city" />
         </Canvas>
       </div>
+
+      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/80 via-black/40 to-black/80" />
 
       <motion.div style={{ opacity, scale }} className="relative z-10 container-custom text-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
