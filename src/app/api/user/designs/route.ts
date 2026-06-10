@@ -1,67 +1,48 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { cookies } from 'next/headers';
+import { handleGetSession, addDesign, getUserDesigns, deleteUserDesign } from '@/lib/auth-lib';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const SESSION_COOKIE = 'session_token';
 
-function getSupabaseAdmin() {
-  return createClient(supabaseUrl, supabaseAnonKey, {
-    auth: { persistSession: false },
-  });
+function getUserId(cookieStore: Awaited<ReturnType<typeof cookies>>): string | null {
+  const token = cookieStore.get(SESSION_COOKIE)?.value;
+  if (!token) return null;
+  const session = handleGetSession(token);
+  return session?.user.id || null;
 }
 
 export async function GET() {
-  try {
-    const supabase = getSupabaseAdmin();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    
-    const { data, error } = await supabase
-      .from('designs')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-    
-    if (error) throw error;
-    return NextResponse.json({ designs: data });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to fetch designs' }, { status: 500 });
+  const cookieStore = await cookies();
+  const userId = getUserId(cookieStore);
+  if (!userId) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
+  const designs = getUserDesigns(userId);
+  return NextResponse.json({ designs });
 }
 
 export async function POST(request: Request) {
-  try {
-    const supabase = getSupabaseAdmin();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    
-    const body = await request.json();
-    const { data, error } = await supabase
-      .from('designs')
-      .insert([{ ...body, user_id: user.id }])
-      .select();
-    
-    if (error) throw error;
-    return NextResponse.json({ design: data?.[0] });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to save design' }, { status: 500 });
+  const cookieStore = await cookies();
+  const userId = getUserId(cookieStore);
+  if (!userId) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
+  const design = await request.json();
+  const saved = addDesign(userId, design);
+  return NextResponse.json({ design: saved });
 }
 
 export async function DELETE(request: Request) {
-  try {
-    const supabase = getSupabaseAdmin();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    
-    const url = new URL(request.url);
-    const id = url.searchParams.get('id');
-    if (!id) return NextResponse.json({ error: 'Design ID required' }, { status: 400 });
-    
-    const { error } = await supabase.from('designs').delete().eq('id', id).eq('user_id', user.id);
-    if (error) throw error;
-    return NextResponse.json({ success: true });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || 'Failed to delete design' }, { status: 500 });
+  const cookieStore = await cookies();
+  const userId = getUserId(cookieStore);
+  if (!userId) {
+    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
+  const { searchParams } = new URL(request.url);
+  const designId = searchParams.get('id');
+  if (!designId) {
+    return NextResponse.json({ error: 'Design ID required' }, { status: 400 });
+  }
+  deleteUserDesign(userId, designId);
+  return NextResponse.json({ success: true });
 }
