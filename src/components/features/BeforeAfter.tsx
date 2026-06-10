@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import AnimatedBackground from '@/components/layout/AnimatedBackground';
 
@@ -31,11 +31,28 @@ export default function BeforeAfter() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [sliderPos, setSliderPos] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+  const [autoPlay, setAutoPlay] = useState(false);
 
   const active = transformations[activeIndex];
 
   const handleMouseDown = () => setIsDragging(true);
   const handleMouseUp = () => setIsDragging(false);
+
+  useEffect(() => {
+    if (!autoPlay) return;
+    const interval = setInterval(() => {
+      setSliderPos((prev) => {
+        if (prev >= 100) return 0;
+        return prev + 1;
+      });
+    }, 40);
+    return () => clearInterval(interval);
+  }, [autoPlay]);
+
+  const cycleRoom = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % transformations.length);
+    setSliderPos(50);
+  }, []);
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging) return;
     const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
@@ -63,6 +80,16 @@ export default function BeforeAfter() {
               {t.title}
             </button>
           ))}
+          <button onClick={() => setAutoPlay(!autoPlay)}
+            className={`px-6 py-3 rounded-xl transition-all flex items-center gap-2 ${autoPlay ? 'bg-gold text-navy font-semibold' : 'glass text-slate hover:text-gold'}`}>
+            <svg className={`w-4 h-4 ${autoPlay ? 'text-navy' : 'text-gold'}`} fill="currentColor" viewBox="0 0 24 24">
+              {autoPlay
+                ? <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                : <path d="M8 5v14l11-7z" />
+              }
+            </svg>
+            {autoPlay ? 'Stop' : 'Auto-Play'}
+          </button>
         </div>
 
         <motion.div key={activeIndex} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-4xl mx-auto">

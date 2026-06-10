@@ -7,7 +7,7 @@ import RoomScene from '@/components/3d/RoomScene';
 import AnimatedBackground from '@/components/layout/AnimatedBackground';
 import { generateDesign } from '@/lib/openai';
 import { formatCurrency } from '@/lib/utils';
-import type { RoomType, StyleType, LightingType } from '@/types';
+import type { RoomType, StyleType, LightingType, FurniturePreferences } from '@/types';
 
 const U = 'https://images.unsplash.com/photo-';
 
@@ -29,6 +29,17 @@ const styles: { value: StyleType; label: string }[] = [
 const lightings: { value: LightingType; label: string }[] = [
   { value: 'warm', label: 'Warm' }, { value: 'natural', label: 'Natural' },
   { value: 'cool', label: 'Cool' }, { value: 'ambient', label: 'Ambient' },
+];
+
+const furnitureOptions: { value: keyof FurniturePreferences; label: string }[] = [
+  { value: 'bed', label: 'Bed' },
+  { value: 'studyTable', label: 'Study Table' },
+  { value: 'wardrobe', label: 'Wardrobe' },
+  { value: 'sofa', label: 'Sofa' },
+  { value: 'desk', label: 'Desk' },
+  { value: 'lamp', label: 'Lamp' },
+  { value: 'curtains', label: 'Curtains' },
+  { value: 'shelving', label: 'Shelving' },
 ];
 
 const colorThemes = [
@@ -119,23 +130,54 @@ export default function AIDesigner() {
             </div>
 
             <div>
-              <label className="text-sm text-slate mb-2 block">Width: {formData.dimensions.width}m</label>
-              <input type="range" min={2} max={10} step={0.5} value={formData.dimensions.width}
-                onChange={(e) => setFormData({ dimensions: { ...formData.dimensions, width: parseFloat(e.target.value) } })}
-                className="w-full accent-gold" />
+              <label className="text-sm text-slate mb-2 block">Width</label>
+              <div className="flex items-center gap-3">
+                <input type="range" min={2} max={10} step={0.5} value={formData.dimensions.width}
+                  onChange={(e) => setFormData({ dimensions: { ...formData.dimensions, width: parseFloat(e.target.value) } })}
+                  className="flex-1 accent-gold" />
+                <input type="number" min={2} max={10} step={0.5} value={formData.dimensions.width}
+                  onChange={(e) => setFormData({ dimensions: { ...formData.dimensions, width: Math.min(10, Math.max(2, parseFloat(e.target.value) || 2)) } })}
+                  className="w-16 input-field text-center text-sm py-1" />
+                <span className="text-xs text-slate">m</span>
+              </div>
             </div>
 
             <div>
-              <label className="text-sm text-slate mb-2 block">Length: {formData.dimensions.length}m</label>
-              <input type="range" min={2} max={12} step={0.5} value={formData.dimensions.length}
-                onChange={(e) => setFormData({ dimensions: { ...formData.dimensions, length: parseFloat(e.target.value) } })}
-                className="w-full accent-gold" />
+              <label className="text-sm text-slate mb-2 block">Length</label>
+              <div className="flex items-center gap-3">
+                <input type="range" min={2} max={12} step={0.5} value={formData.dimensions.length}
+                  onChange={(e) => setFormData({ dimensions: { ...formData.dimensions, length: parseFloat(e.target.value) } })}
+                  className="flex-1 accent-gold" />
+                <input type="number" min={2} max={12} step={0.5} value={formData.dimensions.length}
+                  onChange={(e) => setFormData({ dimensions: { ...formData.dimensions, length: Math.min(12, Math.max(2, parseFloat(e.target.value) || 2)) } })}
+                  className="w-16 input-field text-center text-sm py-1" />
+                <span className="text-xs text-slate">m</span>
+              </div>
             </div>
 
             <div>
-              <label className="text-sm text-slate mb-2 block">Budget: {formatCurrency(formData.budget)}</label>
-              <input type="range" min={10000} max={500000} step={5000} value={formData.budget}
-                onChange={(e) => setFormData({ budget: parseInt(e.target.value) })} className="w-full accent-gold" />
+              <label className="text-sm text-slate mb-2 block">Height</label>
+              <div className="flex items-center gap-3">
+                <input type="range" min={2} max={5} step={0.25} value={formData.dimensions.height}
+                  onChange={(e) => setFormData({ dimensions: { ...formData.dimensions, height: parseFloat(e.target.value) } })}
+                  className="flex-1 accent-gold" />
+                <input type="number" min={2} max={5} step={0.25} value={formData.dimensions.height}
+                  onChange={(e) => setFormData({ dimensions: { ...formData.dimensions, height: Math.min(5, Math.max(2, parseFloat(e.target.value) || 2)) } })}
+                  className="w-16 input-field text-center text-sm py-1" />
+                <span className="text-xs text-slate">m</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm text-slate mb-2 block">Budget</label>
+              <div className="flex items-center gap-3">
+                <input type="range" min={10000} max={500000} step={5000} value={formData.budget}
+                  onChange={(e) => setFormData({ budget: parseInt(e.target.value) })}
+                  className="flex-1 accent-gold" />
+                <input type="number" min={10000} max={500000} step={5000} value={formData.budget}
+                  onChange={(e) => setFormData({ budget: Math.min(500000, Math.max(10000, parseInt(e.target.value) || 10000)) })}
+                  className="w-24 input-field text-center text-sm py-1" />
+              </div>
             </div>
 
             {/* Color Customization */}
@@ -166,6 +208,22 @@ export default function AIDesigner() {
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
+
+            {/* Furniture Preferences */}
+            <div>
+              <label className="text-sm text-slate mb-2 block">Furniture Preferences</label>
+              <div className="grid grid-cols-2 gap-1.5">
+                {furnitureOptions.map((f) => (
+                  <label key={f.value}
+                    className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs cursor-pointer transition-all ${formData.furniture[f.value] ? 'bg-gold/15 border border-gold/30 text-gold' : 'bg-dark-grey/50 text-slate border border-transparent hover:border-gold/15'}`}>
+                    <input type="checkbox" checked={formData.furniture[f.value]}
+                      onChange={() => setFormData({ furniture: { ...formData.furniture, [f.value]: !formData.furniture[f.value] } })}
+                      className="accent-gold w-3 h-3" />
+                    {f.label}
+                  </label>
+                ))}
+              </div>
             </div>
 
             <div>
@@ -246,6 +304,9 @@ export default function AIDesigner() {
                   <button className="flex-1 btn-gold text-xs py-2.5">Save Design</button>
                   <button className="flex-1 btn-glass text-xs py-2.5">Share</button>
                 </div>
+                <button className="w-full border border-gold/40 text-gold text-xs py-2.5 rounded-lg hover:bg-gold/10 transition-all mt-2">
+                  Compare Layouts
+                </button>
               </div>
             )}
           </motion.div>
