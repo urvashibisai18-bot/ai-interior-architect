@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useDesignStore } from '@/store/useDesignStore';
 
 export default function SignInPage() {
   const router = useRouter();
+  const { setUser, loadSavedDesigns } = useDesignStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,7 +26,9 @@ export default function SignInPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Sign in failed');
-      router.push('/dashboard');
+      setUser(data.user);
+      loadSavedDesigns();
+      router.push('/');
     } catch (err: any) {
       setError(err.message);
     } finally {
