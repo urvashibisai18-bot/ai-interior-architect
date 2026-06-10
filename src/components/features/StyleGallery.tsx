@@ -2,16 +2,17 @@
 
 import { motion } from 'framer-motion';
 import { useDesignStore } from '@/store/useDesignStore';
+import AnimatedBackground from '@/components/layout/AnimatedBackground';
 import type { StyleType } from '@/types';
 
 const U = 'https://images.unsplash.com/photo-';
 
 const styles: { id: StyleType; name: string; description: string; image: string }[] = [
   { id: 'modern', name: 'Modern', description: 'Clean lines, neutral tones, functional design', image: `${U}1600607687939-ce8a6c25118c?w=600&h=400&fit=crop` },
-  { id: 'minimalist', name: 'Minimalist', description: 'Less is more — simplicity at its finest', image: `${U}1616486333462-e3e3e3e3e3e3?w=600&h=400&fit=crop` },
+  { id: 'minimalist', name: 'Minimalist', description: 'Less is more — simplicity at its finest', image: `${U}1522771739844-6a9f6d5f14af?w=600&h=400&fit=crop` },
   { id: 'luxury', name: 'Luxury', description: 'Opulent materials, gold accents, grand spaces', image: `${U}1600585154340-be6161a56a0c?w=600&h=400&fit=crop` },
   { id: 'scandinavian', name: 'Scandinavian', description: 'Hygge-inspired, light woods, cozy textiles', image: `${U}1600210492486-724fe5c67fb0?w=600&h=400&fit=crop` },
-  { id: 'japanese', name: 'Japanese', description: 'Wabi-sabi, natural materials, zen spaces', image: `${U}1598928504131-3e3e3e3e3e3e?w=600&h=400&fit=crop` },
+  { id: 'japanese', name: 'Japandi', description: 'Wabi-sabi meets Nordic — zen minimalism with natural warmth', image: `${U}1505693416388-f3c6f5a5e9b8?w=600&h=400&fit=crop` },
   { id: 'industrial', name: 'Industrial', description: 'Raw materials, exposed elements, urban edge', image: `${U}1497366216548-37526070297c?w=600&h=400&fit=crop` },
   { id: 'futuristic', name: 'Futuristic', description: 'Bold geometry, neon accents, smart features', image: `${U}1558618666-9fa1e4e1478f?w=600&h=400&fit=crop` },
 ];
@@ -27,6 +28,7 @@ export default function StyleGallery() {
 
   return (
     <section id="gallery" className="section-padding bg-black">
+      <AnimatedBackground>
       <div className="container-custom">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-16">
           <h2 className="font-heading text-4xl md:text-5xl text-light mb-4">
@@ -64,6 +66,7 @@ export default function StyleGallery() {
           ))}
         </div>
       </div>
+      </AnimatedBackground>
     </section>
   );
 }
