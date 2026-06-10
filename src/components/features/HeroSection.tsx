@@ -1,47 +1,30 @@
 'use client';
 
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Environment, ContactShadows } from '@react-three/drei';
+import { Environment, ContactShadows } from '@react-three/drei';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import * as THREE from 'three';
+import { KingBed, StudyDesk, FloorLamp, LuxurySofa } from '@/components/3d/FurnitureModels';
 
-function HeroRoom() {
-  const groupRef = useRef<THREE.Group>(null);
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
-      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.05;
+function FadeIn({ children, delay = 0, duration = 1 }: { children: React.ReactNode; delay?: number; duration?: number }) {
+  const [ready, setReady] = useState(false);
+  const scaleRef = useRef(0);
+  const meshRef = useRef<THREE.Group>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setReady(true), delay * 1000);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  useFrame((_, delta) => {
+    if (ready && meshRef.current) {
+      scaleRef.current = Math.min(1, scaleRef.current + delta / duration);
+      meshRef.current.scale.setScalar(scaleRef.current);
     }
   });
 
-  return (
-    <group ref={groupRef}>
-      <Float speed={0.5} rotationIntensity={0.2} floatIntensity={0.3}>
-        <mesh position={[0, 0.4, 0]} castShadow>
-          <boxGeometry args={[2.5, 0.2, 1.8]} />
-          <meshStandardMaterial color="#D4AF37" roughness={0.3} metalness={0.7} />
-        </mesh>
-        <mesh position={[0, 0.8, 0.5]} castShadow>
-          <boxGeometry args={[2, 0.4, 0.1]} />
-          <meshStandardMaterial color="#8B7355" roughness={0.5} metalness={0.2} />
-        </mesh>
-        <mesh position={[-0.8, 0.3, 0.6]} castShadow>
-          <cylinderGeometry args={[0.05, 0.08, 0.6, 8]} />
-          <meshStandardMaterial color="#D4AF37" roughness={0.3} metalness={0.8} />
-        </mesh>
-        <mesh position={[0.7, 0.3, -0.5]} castShadow>
-          <boxGeometry args={[0.6, 0.5, 0.6]} />
-          <meshStandardMaterial color="#5C4033" roughness={0.6} metalness={0.1} />
-        </mesh>
-      </Float>
-
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
-        <planeGeometry args={[8, 8]} />
-        <meshStandardMaterial color="#1A1A2E" roughness={0.8} />
-      </mesh>
-    </group>
-  );
+  return <group ref={meshRef} scale={[0, 0, 0]}>{children}</group>;
 }
 
 function Particles() {
@@ -64,6 +47,40 @@ function Particles() {
       </bufferGeometry>
       <pointsMaterial size={0.04} color="#D4AF37" transparent opacity={0.3} sizeAttenuation />
     </points>
+  );
+}
+
+function HeroRoom() {
+  const groupRef = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.08;
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
+        <planeGeometry args={[10, 10]} />
+        <meshStandardMaterial color="#1A1A2E" roughness={0.8} />
+      </mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+        <planeGeometry args={[6, 6]} />
+        <meshStandardMaterial color="#D4AF37" transparent opacity={0.05} />
+      </mesh>
+      <FadeIn delay={0.5} duration={1.2}>
+        <KingBed position={[-1.5, 0, 0.5]} color="#5C4033" pillowColor="#F5F0EB" blanketColor="#D4AF37" />
+      </FadeIn>
+      <FadeIn delay={2.0} duration={1.2}>
+        <StudyDesk position={[1.5, 0, 0.5]} color="#8B7355" hasChair={true} />
+      </FadeIn>
+      <FadeIn delay={3.5} duration={1.2}>
+        <FloorLamp position={[2, 0, -1.5]} color="#D4AF37" isOn={true} />
+      </FadeIn>
+      <FadeIn delay={5.0} duration={1.2}>
+        <LuxurySofa position={[0, 0, -1.5]} color="#5C4033" fabricColor="#D4AF37" />
+      </FadeIn>
+    </group>
   );
 }
 
