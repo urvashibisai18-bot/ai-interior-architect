@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDesignStore } from '@/store/useDesignStore';
 import RoomScene from '@/components/3d/RoomScene';
+import AnimatedBackground from '@/components/layout/AnimatedBackground';
 import { generateDesign } from '@/lib/openai';
 import { formatCurrency } from '@/lib/utils';
 import type { RoomType, StyleType, LightingType } from '@/types';
@@ -50,12 +51,13 @@ export default function AIDesigner() {
       setSuggestions(result.suggestions || []);
       setTotalCost(result.totalCost || 0);
     } catch {
+      const isBed = formData.roomType === 'bedroom';
       setSuggestions([
-        { id: '1', type: 'flooring', name: 'Premium Marble Flooring', cost: Math.round(formData.budget * 0.18), image: `${U}1586023492125-27b2c045efd7?w=400&h=300&fit=crop`, description: 'Italian marble with gold veining' },
-        { id: '2', type: 'lighting', name: 'Crystal Chandelier', cost: Math.round(formData.budget * 0.1), image: `${U}1513504637923-04bf7dad0e5a?w=400&h=300&fit=crop`, description: 'Hand-crafted crystal with gold finish' },
-        { id: '3', type: 'furniture', name: formData.roomType === 'bedroom' ? 'King Size Platform Bed' : 'Luxury Sectional Sofa', cost: Math.round(formData.budget * 0.35), image: `${U}1505693416388-f3c6f5a5e9b8?w=400&h=300&fit=crop`, description: 'Premium velvet upholstery' },
-        { id: '4', type: 'decor', name: 'Gold Accent Wall Art', cost: Math.round(formData.budget * 0.07), image: `${U}1567098324869-f96d4ce5d7b0?w=400&h=300&fit=crop`, description: 'Abstract gold leaf canvas set' },
-        { id: '5', type: 'furniture', name: 'Designer Storage Unit', cost: Math.round(formData.budget * 0.15), image: `${U}1597008808545-1efadd7c2068?w=400&h=300&fit=crop`, description: 'Custom modular storage with LED' },
+        { id: '1', type: 'flooring', name: 'Premium Marble Flooring', cost: Math.round(formData.budget * 0.18), image: `${U}1586023492125-27b2c045efd7?w=400&h=300&fit=crop`, description: 'Italian marble with gold veining — timeless elegance' },
+        { id: '2', type: 'lighting', name: 'Crystal Chandelier', cost: Math.round(formData.budget * 0.1), image: `${U}1513504637923-04bf7dad0e5a?w=400&h=300&fit=crop`, description: 'Hand-crafted crystal with gold finish — 60" diameter' },
+        { id: '3', type: 'furniture', name: isBed ? 'King Size Platform Bed' : 'Luxury Sectional Sofa', cost: Math.round(formData.budget * 0.35), image: isBed ? `${U}1505693416388-f3c6f5a5e9b8?w=400&h=300&fit=crop` : `${U}1555041467-a600c8d0e220?w=400&h=300&fit=crop`, description: isBed ? 'Premium upholstered headboard with gold legs' : 'Premium velvet upholstery with gold trim' },
+        { id: '4', type: 'decor', name: 'Gold Accent Wall Art', cost: Math.round(formData.budget * 0.07), image: `${U}1567098324869-f96d4ce5d7b0?w=400&h=300&fit=crop`, description: 'Abstract gold leaf canvas set — 3-piece collection' },
+        { id: '5', type: 'furniture', name: 'Designer Storage Unit', cost: Math.round(formData.budget * 0.15), image: `${U}1597008808545-1efadd7c2068?w=400&h=300&fit=crop`, description: 'Custom modular storage with integrated LED lighting' },
       ]);
       setTotalCost(Math.round(formData.budget * 0.85));
     } finally {
@@ -85,6 +87,7 @@ export default function AIDesigner() {
 
   return (
     <section id="designer" className="section-padding min-h-screen bg-black">
+      <AnimatedBackground>
       <div className="container-custom">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-16">
           <h2 className="font-heading text-4xl md:text-5xl text-light mb-4">
@@ -248,6 +251,7 @@ export default function AIDesigner() {
           </motion.div>
         </div>
       </div>
+      </AnimatedBackground>
     </section>
   );
 }
