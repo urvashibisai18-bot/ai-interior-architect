@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useDesignStore } from '@/store/useDesignStore';
+import AnimatedBackground from '@/components/layout/AnimatedBackground';
 import { formatCurrency } from '@/lib/utils';
 
 const DEFAULT_ITEMS = [
@@ -55,6 +56,7 @@ export default function BudgetOptimizer() {
 
   return (
     <section id="budget" className="section-padding">
+      <AnimatedBackground>
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -223,6 +225,7 @@ export default function BudgetOptimizer() {
           </motion.div>
         </div>
       </div>
+      </AnimatedBackground>
     </section>
   );
 }
