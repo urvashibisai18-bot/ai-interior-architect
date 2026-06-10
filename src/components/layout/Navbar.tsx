@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
+import { useDesignStore } from '@/store/useDesignStore';
 import type { SectionId } from '@/types';
 
 const navItems: { id: SectionId; label: string }[] = [
@@ -17,6 +19,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const { user } = useDesignStore();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -64,7 +67,15 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          <button className="btn-gold text-sm py-2 px-5 hidden sm:block">Get Started</button>
+          {user ? (
+            <Link href="/dashboard" className="btn-gold text-sm py-2 px-5 hidden sm:block">
+              Dashboard
+            </Link>
+          ) : (
+            <Link href="/auth/signin" className="btn-gold text-sm py-2 px-5 hidden sm:block">
+              Sign In
+            </Link>
+          )}
           <button
             className="lg:hidden text-light text-2xl"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -92,6 +103,11 @@ export default function Navbar() {
                   {item.label}
                 </button>
               ))}
+              {user ? (
+                <Link href="/dashboard" className="text-gold py-2">Dashboard</Link>
+              ) : (
+                <Link href="/auth/signin" className="text-gold py-2">Sign In</Link>
+              )}
             </div>
           </motion.div>
         )}
