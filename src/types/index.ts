@@ -102,3 +102,31 @@ export interface Design {
 }
 
 export type SectionId = 'hero' | 'designer' | 'before-after' | 'gallery' | 'budget' | 'marketplace' | 'ar-preview' | 'features';
+
+export interface User {
+  id: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+}
+
+export interface SavedDesign {
+  id: string;
+  userId: string;
+  roomType: RoomType;
+  dimensions: RoomDimensions;
+  budget: number;
+  style: StyleType;
+  colors: ColorPreferences;
+  furniture: FurniturePreferences;
+  lighting: LightingType;
+  aiSuggestions: AIRecommendation[];
+  totalCost: number;
+  thumbnailUrl?: string;
+  createdAt: string;
+}
