@@ -48,6 +48,11 @@ interface DesignState {
   setIsAuthLoading: (loading: boolean) => void;
   savedDesigns: SavedDesign[];
   setSavedDesigns: (designs: SavedDesign[]) => void;
+
+  // Add to Design queue
+  pendingAdditions: { type: string; name: string; image: string }[];
+  addToDesign: (item: { type: string; name: string; image: string }) => void;
+  clearAdditions: () => void;
 }
 
 const defaultFormData: DesignFormData = {
@@ -55,7 +60,7 @@ const defaultFormData: DesignFormData = {
   dimensions: { width: 5, length: 6, height: 3 },
   budget: 100000,
   style: 'modern',
-  colors: { primary: '#0A192F', secondary: '#D4AF37', accent: '#64FFDA' },
+  colors: { primary: '#0A0A0A', secondary: '#D4AF37', accent: '#9CA3AF' },
   furniture: { bed: false, studyTable: false, wardrobe: false, sofa: true, desk: false, lamp: true, curtains: true, shelving: false },
   lighting: 'natural',
 };
@@ -100,4 +105,9 @@ export const useDesignStore = create<DesignState>((set) => ({
   setIsAuthLoading: (isAuthLoading) => set({ isAuthLoading }),
   savedDesigns: [],
   setSavedDesigns: (savedDesigns) => set({ savedDesigns }),
+
+  // Add to Design
+  pendingAdditions: [],
+  addToDesign: (item) => set((state) => ({ pendingAdditions: [...state.pendingAdditions, item] })),
+  clearAdditions: () => set({ pendingAdditions: [] }),
 }));
