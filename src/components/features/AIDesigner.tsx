@@ -45,7 +45,7 @@ const furnitureOptions = [
 ];
 
 export default function AIDesigner() {
-  const { formData, setFormData, suggestions, setSuggestions, setTotalCost, totalCost, isGenerating, setIsGenerating } = useDesignStore();
+  const { formData, setFormData, suggestions, setSuggestions, setTotalCost, totalCost, isGenerating, setIsGenerating, user } = useDesignStore();
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -55,16 +55,37 @@ export default function AIDesigner() {
       setTotalCost(result.totalCost || 0);
     } catch {
       setSuggestions([
-        { id: '1', type: 'flooring', name: 'Wooden flooring', cost: 12000, image: '/images/flooring.jpg', description: 'Premium oak wood flooring' },
-        { id: '2', type: 'lighting', name: 'Warm ambient LED strips', cost: 5000, image: '/images/lighting.jpg', description: 'Smart RGB LED strips' },
-        { id: '3', type: 'furniture', name: 'Walnut wood study desk', cost: 8500, image: '/images/desk.jpg', description: 'Modern minimalist desk' },
-        { id: '4', type: 'decor', name: 'Minimalist wall art set', cost: 3200, image: '/images/art.jpg', description: 'Abstract canvas set' },
+        { id: '1', type: 'flooring', name: 'Premium Wooden Flooring', cost: 12000, image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop', description: 'Solid oak wood flooring with matte finish' },
+        { id: '2', type: 'lighting', name: 'Smart Ambient LED System', cost: 5000, image: 'https://images.unsplash.com/photo-1513504637923-04bf7dad0e5a?w=300&h=200&fit=crop', description: 'App-controlled RGB LED strips with warm modes' },
+        { id: '3', type: 'furniture', name: formData.roomType === 'bedroom' ? 'King Size Platform Bed' : 'Modern Sectional Sofa', cost: formData.roomType === 'bedroom' ? 18000 : 25000, image: 'https://images.unsplash.com/photo-1505693416388-f3c6f5a5e9b8?w=300&h=200&fit=crop', description: 'Premium upholstered furniture piece' },
+        { id: '4', type: 'decor', name: 'Curated Wall Art Collection', cost: 3200, image: 'https://images.unsplash.com/photo-1567098324869-f96d4ce5d7b0?w=300&h=200&fit=crop', description: 'Set of 3 abstract canvas prints' },
+        { id: '5', type: 'furniture', name: 'Multipurpose Storage Unit', cost: 12000, image: 'https://images.unsplash.com/photo-1597008808545-1efadd7c2068?w=300&h=200&fit=crop', description: 'Modular storage with premium finish' },
       ]);
       setTotalCost(28700);
     } finally {
       setIsGenerating(false);
     }
   };
+
+  if (!user) {
+    return (
+      <section id="designer" className="section-padding min-h-screen flex items-center justify-center">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center max-w-lg">
+          <div className="w-20 h-20 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <h2 className="font-heading text-3xl text-light mb-4">Sign In to Design</h2>
+          <p className="text-slate mb-8">Create an account or sign in to use the AI Design Studio and bring your dream space to life.</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/auth/signin" className="btn-gold text-lg px-10 py-4">Sign In</a>
+            <a href="/auth/signup" className="btn-glass text-lg px-10 py-4">Create Account</a>
+          </div>
+        </motion.div>
+      </section>
+    );
+  }
 
   return (
     <section id="designer" className="section-padding min-h-screen">
@@ -249,8 +270,10 @@ export default function AIDesigner() {
               <div className="space-y-4">
                 {suggestions.map((item) => (
                   <div key={item.id} className="glass rounded-xl p-4 hover:border-gold/40 transition-all">
-                    <div className="w-full h-24 rounded-lg bg-gradient-to-br from-gold/10 to-gold/5 mb-3 flex items-center justify-center">
-                      <span className="text-gold/60 text-xs uppercase tracking-wider">{item.type}</span>
+                    <div className="w-full h-24 rounded-lg overflow-hidden mb-3 relative">
+                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
+                      <span className="absolute bottom-2 left-2 text-xs text-gold uppercase tracking-wider">{item.type}</span>
                     </div>
                     <h4 className="text-light font-semibold text-sm mb-1">{item.name}</h4>
                     <p className="text-slate text-xs mb-2">{item.description}</p>
@@ -284,6 +307,11 @@ export default function AIDesigner() {
                 <button className="btn-glass w-full text-sm mt-4">
                   Compare Layouts
                 </button>
+
+                <div className="flex gap-2 mt-3">
+                  <button className="flex-1 btn-gold text-sm py-2.5">Save Design</button>
+                  <button className="flex-1 btn-glass text-sm py-2.5">Share</button>
+                </div>
               </div>
             )}
           </motion.div>
