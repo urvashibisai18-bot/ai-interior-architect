@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import AnimatedBackground from '@/components/layout/AnimatedBackground';
 
 export default function ARPreview() {
   const [isActive, setIsActive] = useState(false);
@@ -34,6 +35,7 @@ export default function ARPreview() {
 
   return (
     <section id="ar-preview" className="section-padding">
+      <AnimatedBackground>
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -120,6 +122,7 @@ export default function ARPreview() {
           </div>
         </motion.div>
       </div>
+      </AnimatedBackground>
     </section>
   );
 }
