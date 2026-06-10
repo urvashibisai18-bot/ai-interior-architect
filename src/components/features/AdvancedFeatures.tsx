@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
+import AnimatedBackground from '@/components/layout/AnimatedBackground';
 import { formatCurrency } from '@/lib/utils';
 
 function ImageAnalyzer() {
@@ -252,6 +253,7 @@ function VoiceDesigning() {
 export default function AdvancedFeatures() {
   return (
     <section id="features" className="section-padding bg-black">
+      <AnimatedBackground>
       <div className="container-custom">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-16">
           <h2 className="font-heading text-4xl md:text-5xl text-light mb-4">
@@ -267,6 +269,7 @@ export default function AdvancedFeatures() {
           <VoiceDesigning />
         </div>
       </div>
+      </AnimatedBackground>
     </section>
   );
 }
