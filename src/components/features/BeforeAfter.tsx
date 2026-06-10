@@ -2,27 +2,28 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import AnimatedBackground from '@/components/layout/AnimatedBackground';
 
 const U = 'https://images.unsplash.com/photo-';
 
 const transformations = [
   {
     title: 'Living Room',
-    before: `${U}1586023492125-27b2c045efd7?w=1000&h=600&fit=crop`,
+    before: `${U}1555041467-a600c8d0e220?w=1000&h=600&fit=crop`,
     after: `${U}1600607687939-ce8a6c25118c?w=1000&h=600&fit=crop`,
-    description: 'Modern luxury living room with ambient gold lighting',
+    description: 'From a normal living space to a bespoke AI-designed luxury lounge with gold accents',
   },
   {
     title: 'Bedroom',
-    before: `${U}1616594037284-b1b7e4e3b9c0?w=1000&h=600&fit=crop`,
-    after: `${U}1616620001640-6e0f9f4e3b9c?w=1000&h=600&fit=crop`,
-    description: 'Minimalist bedroom with warm gold accents',
+    before: `${U}1522771739844-6a9f6d5f14af?w=1000&h=600&fit=crop`,
+    after: `${U}1505693416388-f3c6f5a5e9b8?w=1000&h=600&fit=crop`,
+    description: 'A standard bedroom transformed into a premium sanctuary with smart ambient lighting',
   },
   {
     title: 'Office',
-    before: `${U}1497366216548-37526070297c?w=1000&h=600&fit=crop`,
-    after: `${U}1497366811358-5e7e3e3e3e3e?w=1000&h=600&fit=crop`,
-    description: 'Executive workspace with smart gold detailing',
+    before: `${U}1595514535413-5cbce93d7ef2?w=1000&h=600&fit=crop`,
+    after: `${U}1497366216548-37526070297c?w=1000&h=600&fit=crop`,
+    description: 'Everyday workspace redesigned as a sophisticated executive suite with AI-optimized layout',
   },
 ];
 
@@ -44,6 +45,7 @@ export default function BeforeAfter() {
 
   return (
     <section id="before-after" className="section-padding bg-black">
+      <AnimatedBackground>
       <div className="container-custom">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-16">
           <h2 className="font-heading text-4xl md:text-5xl text-light mb-4">
@@ -108,6 +110,7 @@ export default function BeforeAfter() {
           </p>
         </motion.div>
       </div>
+      </AnimatedBackground>
     </section>
   );
 }
